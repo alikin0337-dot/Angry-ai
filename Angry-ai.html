@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>be1.ru</title>
+</head>
+<body>
+<p>&lt;!DOCTYPE html&gt;</p>
+
+<p>&lt;html&gt;</p>
+
+<p>&lt;head&gt;</p>
+
+<p>&lt;meta charset=&quot;UTF-8&quot; /&gt;</p>
+
+<p>&lt;title&gt;Angry Birds Mini&lt;/title&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&lt;style&gt;</p>
+
+<p>body{</p>
+
+<p>&nbsp; &nbsp; margin:0;</p>
+
+<p>&nbsp; &nbsp; overflow:hidden;</p>
+
+<p>&nbsp; &nbsp; background:#87CEEB;</p>
+
+<p>&nbsp; &nbsp; font-family:sans-serif;</p>
+
+<p>}</p>
+
+<p>canvas{</p>
+
+<p>&nbsp; &nbsp; display:block;</p>
+
+<p>}</p>
+
+<p>#score{</p>
+
+<p>&nbsp; &nbsp; position:absolute;</p>
+
+<p>&nbsp; &nbsp; top:10px;</p>
+
+<p>&nbsp; &nbsp; left:10px;</p>
+
+<p>&nbsp; &nbsp; font-size:24px;</p>
+
+<p>&nbsp; &nbsp; color:#000;</p>
+
+<p>}</p>
+
+<p>&lt;/style&gt;</p>
+
+<p>&lt;/head&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&lt;body&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&lt;div id=&quot;score&quot;&gt;Score: 0&lt;/div&gt;</p>
+
+<p>&lt;canvas id=&quot;c&quot;&gt;&lt;/canvas&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&lt;script&gt;</p>
+
+<p>const canvas = document.getElementById(&quot;c&quot;)</p>
+
+<p>const ctx = canvas.getContext(&quot;2d&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p>canvas.width = innerWidth</p>
+
+<p>canvas.height = innerHeight</p>
+
+<p>&nbsp;</p>
+
+<p>let score = 0</p>
+
+<p>const scoreText = document.getElementById(&quot;score&quot;)</p>
+
+<p>&nbsp;</p>
+
+<p>// ================= BIRD</p>
+
+<p>let bird = {</p>
+
+<p>&nbsp; &nbsp; x:150,</p>
+
+<p>&nbsp; &nbsp; y:canvas.height-180,</p>
+
+<p>&nbsp; &nbsp; r:25,</p>
+
+<p>&nbsp; &nbsp; vx:0,</p>
+
+<p>&nbsp; &nbsp; vy:0,</p>
+
+<p>&nbsp; &nbsp; flying:false</p>
+
+<p>}</p>
+
+<p>&nbsp;</p>
+
+<p>const gravity = 0.7</p>
+
+<p>&nbsp;</p>
+
+<p>// ================= PIGS</p>
+
+<p>let pigs = []</p>
+
+<p>&nbsp;</p>
+
+<p>function createLevel(){</p>
+
+<p>&nbsp; &nbsp; pigs=[]</p>
+
+<p>&nbsp; &nbsp; for(let i=0;i&lt;3;i++){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; pigs.push({</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; x:canvas.width-250+i*70,</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; y:canvas.height-160,</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; r:22,</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; alive:true</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; })</p>
+
+<p>&nbsp; &nbsp; }</p>
+
+<p>}</p>
+
+<p>createLevel()</p>
+
+<p>&nbsp;</p>
+
+<p>// ================= TOUCH</p>
+
+<p>let drag=false</p>
+
+<p>&nbsp;</p>
+
+<p>canvas.addEventListener(&quot;touchstart&quot;,()=&gt;drag=true)</p>
+
+<p>&nbsp;</p>
+
+<p>canvas.addEventListener(&quot;touchmove&quot;,e=&gt;{</p>
+
+<p>&nbsp; &nbsp; if(!drag) return</p>
+
+<p>&nbsp; &nbsp; const t=e.touches[0]</p>
+
+<p>&nbsp; &nbsp; bird.x=t.clientX</p>
+
+<p>&nbsp; &nbsp; bird.y=t.clientY</p>
+
+<p>})</p>
+
+<p>&nbsp;</p>
+
+<p>canvas.addEventListener(&quot;touchend&quot;,()=&gt;{</p>
+
+<p>&nbsp; &nbsp; drag=false</p>
+
+<p>&nbsp; &nbsp; bird.vx=(150-bird.x)/5</p>
+
+<p>&nbsp; &nbsp; bird.vy=(canvas.height-180-bird.y)/5</p>
+
+<p>&nbsp; &nbsp; bird.flying=true</p>
+
+<p>})</p>
+
+<p>&nbsp;</p>
+
+<p>// ================= UPDATE</p>
+
+<p>function update(){</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; if(bird.flying){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; bird.vy+=gravity</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; bird.x+=bird.vx</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; bird.y+=bird.vy</p>
+
+<p>&nbsp; &nbsp; }</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; pigs.forEach(p=&gt;{</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; if(!p.alive) return</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; let dx=bird.x-p.x</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; let dy=bird.y-p.y</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; let dist=Math.sqrt(dx*dx+dy*dy)</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; if(dist &lt; bird.r+p.r){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; p.alive=false</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; score+=100</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; scoreText.innerText=&quot;Score: &quot;+score</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; }</p>
+
+<p>&nbsp; &nbsp; })</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; if(bird.y&gt;canvas.height+200){</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; reset()</p>
+
+<p>&nbsp; &nbsp; }</p>
+
+<p>}</p>
+
+<p>&nbsp;</p>
+
+<p>function reset(){</p>
+
+<p>&nbsp; &nbsp; bird.x=150</p>
+
+<p>&nbsp; &nbsp; bird.y=canvas.height-180</p>
+
+<p>&nbsp; &nbsp; bird.vx=bird.vy=0</p>
+
+<p>&nbsp; &nbsp; bird.flying=false</p>
+
+<p>&nbsp; &nbsp; createLevel()</p>
+
+<p>}</p>
+
+<p>&nbsp;</p>
+
+<p>// ================= DRAW</p>
+
+<p>function draw(){</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; ctx.clearRect(0,0,canvas.width,canvas.height)</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; ctx.fillStyle=&quot;#4CAF50&quot;</p>
+
+<p>&nbsp; &nbsp; ctx.fillRect(0,canvas.height-100,canvas.width,100)</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; // sling</p>
+
+<p>&nbsp; &nbsp; ctx.strokeStyle=&quot;#8B4513&quot;</p>
+
+<p>&nbsp; &nbsp; ctx.lineWidth=8</p>
+
+<p>&nbsp; &nbsp; ctx.beginPath()</p>
+
+<p>&nbsp; &nbsp; ctx.moveTo(150,canvas.height-180)</p>
+
+<p>&nbsp; &nbsp; ctx.lineTo(bird.x,bird.y)</p>
+
+<p>&nbsp; &nbsp; ctx.stroke()</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; // bird</p>
+
+<p>&nbsp; &nbsp; ctx.fillStyle=&quot;red&quot;</p>
+
+<p>&nbsp; &nbsp; ctx.beginPath()</p>
+
+<p>&nbsp; &nbsp; ctx.arc(bird.x,bird.y,bird.r,0,Math.PI*2)</p>
+
+<p>&nbsp; &nbsp; ctx.fill()</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp; &nbsp; // pigs</p>
+
+<p>&nbsp; &nbsp; pigs.forEach(p=&gt;{</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; if(!p.alive) return</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; ctx.fillStyle=&quot;green&quot;</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; ctx.beginPath()</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; ctx.arc(p.x,p.y,p.r,0,Math.PI*2)</p>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; ctx.fill()</p>
+
+<p>&nbsp; &nbsp; })</p>
+
+<p>}</p>
+
+<p>&nbsp;</p>
+
+<p>function loop(){</p>
+
+<p>&nbsp; &nbsp; update()</p>
+
+<p>&nbsp; &nbsp; draw()</p>
+
+<p>&nbsp; &nbsp; requestAnimationFrame(loop)</p>
+
+<p>}</p>
+
+<p>&nbsp;</p>
+
+<p>loop()</p>
+
+<p>&lt;/script&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>&lt;/body&gt;</p>
+
+<p>&lt;/html&gt;</p>
+</body>
+</html>
